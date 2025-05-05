@@ -4,13 +4,61 @@
 <div class="col-mid-6 offset-md-3">
     <h1>Update Record</h1>
     <br/>
-    <form method="POST" action="">
+    <form method="POST" action="" id="updateForm">
         {% csrf_token %}
         {{ form.as_p }}
 
-        <button type="submit" class="btn btn-secondary">Update Record</button>
+        <button type="submit" id="updateButton" class="btn btn-primary" disabled>Update Record</button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Back</a>
     </form>
-
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const form = document.getElementById("updateForm");
+        const updateButton = document.getElementById("updateButton");
+
+        // Store the initial state of the form fields
+        const initialFormState = getFormState(form);
+
+        // Disable the button initially since no changes have been made
+        updateButton.disabled = true;
+
+        // Add an event listener for input changes in the form
+        form.addEventListener("input", function () {
+            const currentFormState = getFormState(form);
+
+            // Enable the button only if the form values have changed
+            if (isFormChanged(initialFormState, currentFormState)) {
+                updateButton.disabled = false;
+            } else {
+                updateButton.disabled = true;
+            }
+        });
+
+        // Function to get the state of form fields
+        function getFormState(form) {
+            const formData = new FormData(form);
+            const state = {};
+
+            for (const [key, value] of formData.entries()) {
+                state[key] = value;
+            }
+
+            return state;
+        }
+
+        // Function to check if the form has changed
+        function isFormChanged(initialState, currentState) {
+            // Iterate over the initial state and compare values
+            for (const key in initialState) {
+                if (initialState[key] !== currentState[key]) {
+                    return true;
+                }
+            }
+            return false; // No changes detected
+        }
+    });
+</script>
 
 {% endblock %}
