@@ -4,6 +4,7 @@ from django.contrib import messages
 from .forms import SignUpForm, AddRecordForm
 from .models import record
 
+
 def home(request):
     records = record.objects.all()
 
@@ -21,12 +22,14 @@ def home(request):
             return redirect('home')
     else:
 
-        return render(request, 'home.html', {'records':records})
+        return render(request, 'home.html', {'records': records})
+
 
 def logout_user(request):
     logout(request)
     messages.success(request, "You have been logged out successfully...")
     return redirect('home')
+
 
 def register_user(request):
     if request.method == 'POST':
@@ -38,13 +41,15 @@ def register_user(request):
             password = form.cleaned_data['password1']
             user = authenticate(username=username, password=password)
             # login(request, user)
-            messages.success(request, 'You have been successfully Registered !! Welcome !! To login please use your Credentials')
+            messages.success(request,
+                             'You have been successfully Registered !! Welcome !! To login please use your Credentials')
             return redirect('home')
     else:
         form = SignUpForm()
-        return render(request, 'register.html', {'form':form})
+        return render(request, 'register.html', {'form': form})
 
     return render(request, 'register.html', {'form': form})
+
 
 def customer_record(request, pk):
     if request.user.is_authenticated:
@@ -53,6 +58,7 @@ def customer_record(request, pk):
     else:
         messages.success(request, 'You must be logged in to view records!!!')
         return redirect('home')
+
 
 def delete_record(request, pk):
     if request.user.is_authenticated:
@@ -64,6 +70,7 @@ def delete_record(request, pk):
         messages.success(request, 'You must be logged in to delete records!!!')
         return redirect('home')
 
+
 def add_record(request):
     form = AddRecordForm(request.POST or None)
     if request.user.is_authenticated:
@@ -72,10 +79,11 @@ def add_record(request):
                 add_record = form.save()
                 messages.success(request, 'Record has been added Successfully!!!')
                 return redirect('home')
-        return render(request, 'add_record.html', {'form':form})
+        return render(request, 'add_record.html', {'form': form})
     else:
         messages.success(request, 'You must be logged in to add records!!!')
         return redirect('home')
+
 
 def update_record(request, pk):
     if request.user.is_authenticated:
@@ -83,11 +91,9 @@ def update_record(request, pk):
         form = AddRecordForm(request.POST or None, instance=current_record)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Record has been updated Successfully!!!')
+            messages.success(request, "Record has been updated Successfully!!!")
             return redirect('home')
-        return render(request, 'update_record.html', {'form':form})
+        return render(request, 'update_record.html', {'form': form})
     else:
         messages.success(request, 'You must be logged in to update records!!!')
         return redirect('home')
-
-
